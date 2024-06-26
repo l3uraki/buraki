@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "buraki"
-version = "0.1.0a0"
+version = "0.1.0a1"
 description = "Blog for publishing achievements in IT, business and sports"
 license = "MIT"
 authors = ["Rasim Eminov <eminov.workspace@yandex.ru>"]
