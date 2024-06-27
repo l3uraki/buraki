@@ -4,6 +4,7 @@
 @toc
     * [public class Category](#public-class-category)
     * [public class Post](#public-class-post)
+    * [public class PostCategorySpecification](#public-class-postcategoryspecification)
 
 @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
 @copyright Copyright (c) 2024-present Rasim Eminov
@@ -13,12 +14,16 @@
 
 import datetime
 import enum
+import typing
 import uuid
-from typing import List
+from typing import List, Tuple
+
+import buraki.core.common as core_common
 
 __all__ = (
     "Category",
-    "Post"
+    "Post",
+    "PostCategorySpecification"
 )
 
 
@@ -120,6 +125,10 @@ class Post:
     def post_id(self) -> uuid.UUID:
         return self._post_id
 
+    @property
+    def category(self) -> Category:
+        return self._category
+
     def __eq__(self, other):
         return (
             self is other or (
@@ -140,3 +149,41 @@ class Post:
             f"likes={self._likes!r}, "
             f"dislikes={self._dislikes!r})"
         )
+
+
+class PostCategorySpecification(core_common.CompositeSpecification[Post]):
+    """
+    Спецификация категории поста в блоге.
+
+    @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+    @see buraki.core.blog.Category
+    @see buraki.core.blog.Post
+    @see buraki.core.common.CompositeSpecification
+    @since 0.1.0
+    """
+
+    __slots__ = "_reference_category"
+
+    def __init__(self, reference_category: Category):
+        """
+        Конструктор спецификации категории поста в блоге.
+
+        @parameter reference_category
+            Эталонная категория поста.
+        @ptype reference_category
+            buraki.core.blog.Category
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @see buraki.core.blog.Category
+        @since 0.1.0
+        """
+        self._reference_category = reference_category
+
+    @typing.override
+    def get_filters(self) -> Tuple:
+        return (
+            self._reference_category,
+        )
+
+    @typing.override
+    def is_satisfied_by(self, candidate: Post) -> bool:
+        return candidate.category == self._reference_category
