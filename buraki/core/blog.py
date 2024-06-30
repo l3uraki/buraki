@@ -5,6 +5,7 @@
     * [public class Category](#public-class-category)
     * [public class Post](#public-class-post)
     * [public class PostCategorySpecification](#public-class-postcategoryspecification)
+    * [public class PostCreatedAtSpecification](#public-class-postcreatedatspecification)
 
 @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
 @copyright Copyright (c) 2024-present Rasim Eminov
@@ -23,7 +24,8 @@ import buraki.core.common as core_common
 __all__ = (
     "Category",
     "Post",
-    "PostCategorySpecification"
+    "PostCategorySpecification",
+    "PostCreatedAtSpecification"
 )
 
 
@@ -129,6 +131,10 @@ class Post:
     def category(self) -> Category:
         return self._category
 
+    @property
+    def created_at(self) -> datetime.datetime:
+        return self._created_at
+
     def __eq__(self, other):
         return (
             self is other or (
@@ -187,3 +193,49 @@ class PostCategorySpecification(core_common.CompositeSpecification[Post]):
     @typing.override
     def is_satisfied_by(self, candidate: Post) -> bool:
         return candidate.category == self._reference_category
+
+
+class PostCreatedAtSpecification(core_common.CompositeSpecification[Post]):
+    """
+    Спецификация даты и времени публикации поста в блоге.
+
+    @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+    @see buraki.core.blog.Post
+    @see buraki.core.common.CompositeSpecification
+    @since 0.1.0
+    """
+
+    __slots__ = (
+        "_created_from",
+        "_created_to"
+    )
+
+    def __init__(self, created_from: datetime.datetime, created_to: datetime.datetime):
+        """
+        Конструктор спецификации даты и времени публикации поста в
+        блоге.
+
+        @parameter created_from
+            Нижняя граница даты и времени публикации поста.
+        @ptype created_from
+            datetime.datetime
+        @parameter created_to
+            Верхняя граница даты и времени публикации поста.
+        @ptype created_to
+            datetime.datetime
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @since 0.1.0
+        """
+        self._created_from = created_from
+        self._created_to = created_to
+
+    @typing.override
+    def get_filters(self) -> Tuple:
+        return (
+            self._created_from,
+            self._created_to
+        )
+
+    @typing.override
+    def is_satisfied_by(self, candidate: Post) -> bool:
+        return self._created_from <= candidate.created_at <= self._created_to
