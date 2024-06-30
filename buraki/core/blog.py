@@ -5,7 +5,7 @@
     * [public class Category](#public-class-category)
     * [public class Post](#public-class-post)
     * [public class PostCategorySpecification](#public-class-postcategoryspecification)
-    * [public class PostCreatedAtSpecification](#public-class-postcreatedatspecification)
+    * [public class PostPublishedAtSpecification](#public-class-postpublishedatspecification)
 
 @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
 @copyright Copyright (c) 2024-present Rasim Eminov
@@ -25,7 +25,7 @@ __all__ = (
     "Category",
     "Post",
     "PostCategorySpecification",
-    "PostCreatedAtSpecification"
+    "PostPublishedAtSpecification"
 )
 
 
@@ -56,8 +56,8 @@ class Post:
     __slots__ = (
         "_post_id",
         "_category",
-        "_created_at",
-        "_topic",
+        "_published_at",
+        "_title",
         "_content",
         "_tags",
         "_likes",
@@ -68,8 +68,8 @@ class Post:
         self,
         post_id: uuid.UUID,
         category: Category,
-        created_at: datetime.datetime,
-        topic: str,
+        published_at: datetime.datetime,
+        title: str,
         content: str,
         tags: List[str],
         likes: int,
@@ -86,13 +86,13 @@ class Post:
             Категория поста.
         @ptype category
             buraki.core.blog.Category
-        @parameter created_at
+        @parameter published_at
             Дата и время публикации поста.
-        @ptype created_at
+        @ptype published_at
             datetime.datetime
-        @parameter topic
+        @parameter title
             Заголовок поста.
-        @ptype topic
+        @ptype title
             str
         @parameter content
             Содержимое поста: текст, медиа, файлы и прочее.
@@ -116,8 +116,8 @@ class Post:
         """
         self._post_id = post_id
         self._category = category
-        self._created_at = created_at
-        self._topic = topic
+        self._published_at = published_at
+        self._title = title
         self._content = content
         self._tags = tags
         self._likes = likes
@@ -132,8 +132,8 @@ class Post:
         return self._category
 
     @property
-    def created_at(self) -> datetime.datetime:
-        return self._created_at
+    def published_at(self) -> datetime.datetime:
+        return self._published_at
 
     def __eq__(self, other):
         return (
@@ -148,8 +148,8 @@ class Post:
             f"{type(self).__qualname__}("
             f"post_id={self._post_id!r}, "
             f"category={self._category!r}, "
-            f"created_at={self._created_at!r}, "
-            f"topic={self._topic!r}, "
+            f"published_at={self._published_at!r}, "
+            f"title={self._title!r}, "
             f"content={self._content!r}, "
             f"tags={self._tags!r}, "
             f"likes={self._likes!r}, "
@@ -195,7 +195,7 @@ class PostCategorySpecification(core_common.CompositeSpecification[Post]):
         return candidate.category == self._reference_category
 
 
-class PostCreatedAtSpecification(core_common.CompositeSpecification[Post]):
+class PostPublishedAtSpecification(core_common.CompositeSpecification[Post]):
     """
     Спецификация даты и времени публикации поста в блоге.
 
@@ -206,36 +206,36 @@ class PostCreatedAtSpecification(core_common.CompositeSpecification[Post]):
     """
 
     __slots__ = (
-        "_created_from",
-        "_created_to"
+        "_published_from",
+        "_published_to"
     )
 
-    def __init__(self, created_from: datetime.datetime, created_to: datetime.datetime):
+    def __init__(self, published_from: datetime.datetime, published_to: datetime.datetime):
         """
         Конструктор спецификации даты и времени публикации поста в
         блоге.
 
-        @parameter created_from
+        @parameter published_from
             Нижняя граница даты и времени публикации поста.
-        @ptype created_from
+        @ptype published_from
             datetime.datetime
-        @parameter created_to
+        @parameter published_to
             Верхняя граница даты и времени публикации поста.
-        @ptype created_to
+        @ptype published_to
             datetime.datetime
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
         @since 0.1.0
         """
-        self._created_from = created_from
-        self._created_to = created_to
+        self._published_from = published_from
+        self._published_to = published_to
 
     @typing.override
     def get_filters(self) -> Tuple:
         return (
-            self._created_from,
-            self._created_to
+            self._published_from,
+            self._published_to
         )
 
     @typing.override
     def is_satisfied_by(self, candidate: Post) -> bool:
-        return self._created_from <= candidate.created_at <= self._created_to
+        return self._published_from <= candidate.published_at <= self._published_to
