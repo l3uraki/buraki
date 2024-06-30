@@ -6,6 +6,7 @@
     * [public class Post](#public-class-post)
     * [public class PostCategorySpecification](#public-class-postcategoryspecification)
     * [public class PostPublishedAtSpecification](#public-class-postpublishedatspecification)
+    * [public class PostTagsSpecification](#public-class-posttagsspecification)
 
 @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
 @copyright Copyright (c) 2024-present Rasim Eminov
@@ -25,7 +26,8 @@ __all__ = (
     "Category",
     "Post",
     "PostCategorySpecification",
-    "PostPublishedAtSpecification"
+    "PostPublishedAtSpecification",
+    "PostTagsSpecification"
 )
 
 
@@ -135,6 +137,10 @@ class Post:
     def published_at(self) -> datetime.datetime:
         return self._published_at
 
+    @property
+    def tags(self) -> List[str]:
+        return self._tags.copy()
+
     def __eq__(self, other):
         return (
             self is other or (
@@ -239,3 +245,42 @@ class PostPublishedAtSpecification(core_common.CompositeSpecification[Post]):
     @typing.override
     def is_satisfied_by(self, candidate: Post) -> bool:
         return self._published_from <= candidate.published_at <= self._published_to
+
+
+class PostTagsSpecification(core_common.CompositeSpecification[Post]):
+    """
+    Спецификация тегов поста в блоге.
+
+    @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+    @see buraki.core.blog.Post
+    @see buraki.core.common.CompositeSpecification
+    @since 0.1.0
+    """
+
+    __slots__ = "_reference_tags"
+
+    def __init__(self, *reference_tags: str):
+        """
+        Конструктор спецификации тегов поста в блоге.
+
+        @parameter reference_tags
+            Эталонные теги поста.
+        @ptype reference_tags
+            typing.Tuple[str, ...]
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @since 0.1.0
+        """
+        self._reference_tags = reference_tags
+
+    @typing.override
+    def get_filters(self) -> Tuple:
+        return (
+            self._reference_tags,
+        )
+
+    @typing.override
+    def is_satisfied_by(self, candidate: Post) -> bool:
+        return any(
+            reference_tag in candidate.tags
+            for reference_tag in self._reference_tags
+        )
