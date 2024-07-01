@@ -7,6 +7,7 @@
     * [public class PostCategorySpecification](#public-class-postcategoryspecification)
     * [public class PostPublishedAtSpecification](#public-class-postpublishedatspecification)
     * [public class PostTagsSpecification](#public-class-posttagsspecification)
+    * [public class IPostRepository](#public-class-ipostrepository)
 
 @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
 @copyright Copyright (c) 2024-present Rasim Eminov
@@ -14,6 +15,7 @@
 @since 0.1.0
 """
 
+import abc
 import datetime
 import enum
 import typing
@@ -27,7 +29,8 @@ __all__ = (
     "Post",
     "PostCategorySpecification",
     "PostPublishedAtSpecification",
-    "PostTagsSpecification"
+    "PostTagsSpecification",
+    "IPostRepository"
 )
 
 
@@ -138,8 +141,24 @@ class Post:
         return self._published_at
 
     @property
+    def title(self) -> str:
+        return self._title
+
+    @property
+    def content(self) -> str:
+        return self._content
+
+    @property
     def tags(self) -> List[str]:
         return self._tags.copy()
+
+    @property
+    def likes(self) -> int:
+        return self._likes
+
+    @property
+    def dislikes(self) -> int:
+        return self._dislikes
 
     def __eq__(self, other):
         return (
@@ -284,3 +303,146 @@ class PostTagsSpecification(core_common.CompositeSpecification[Post]):
             reference_tag in candidate.tags
             for reference_tag in self._reference_tags
         )
+
+
+class IPostRepository(typing.Protocol):
+    """
+    Абстрактное хранилище постов в блоге.
+
+    @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+    @see buraki.core.blog.Post
+    @since 0.1.0
+    """
+
+    @abc.abstractmethod
+    def add(self, new_post: Post) -> typing.Awaitable[None]:
+        """
+        Добавить пост в блоге в хранилище.
+
+        @parameter new_post
+            Добавляемый в хранилище пост.
+        @ptype new_post
+            buraki.core.blog.Post
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @see buraki.core.blog.Post
+        @since 0.1.0
+        """
+
+    @abc.abstractmethod
+    def get_by_id(self, post_id: uuid.UUID) -> typing.Awaitable[Post]:
+        """
+        Получить пост в блоге из хранилища по идентификатору.
+
+        @parameter post_id
+            Идентификатор поста.
+        @ptype post_id
+            uuid.UUID
+        @return
+            Пост, соответствующий указанному идентификатору.
+        @rtype
+            buraki.core.blog.Post
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @see buraki.core.blog.Post
+        @since 0.1.0
+        """
+
+    @abc.abstractmethod
+    def get_by_spec(
+        self,
+        spec: core_common.ISpecification[Post],
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None
+    ) -> typing.AsyncIterator[Post]:
+        """
+        Получить посты в блоге из хранилища по спецификации.
+
+        @parameter spec
+            Спецификация поста.
+        @ptype spec
+            buraki.core.common.ISpecification
+        @parameter limit
+            Ограничение числа полученных постов.
+
+            Если параметр не указан, то число полученных постов не будет
+            ограничено.
+        @ptype limit
+            typing.Optional[int]
+        @parameter offset
+            Пропуск первых нескольких полученных постов.
+
+            Если параметр не указан, то ни один полученный пост не будет
+            пропущен.
+        @ptype offset
+            typing.Optional[int]
+        @return
+            Посты, соответствующие указанной спецификации.
+        @rtype
+            typing.AsyncIterator[buraki.core.blog.Post]
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @see buraki.core.blog.Post
+        @see buraki.core.common.ISpecification
+        @since 0.1.0
+        """
+
+    @abc.abstractmethod
+    def get_all(
+        self,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None
+    ) -> typing.AsyncIterator[Post]:
+        """
+        Получить все посты в блоге из хранилища.
+
+        @parameter limit
+            Ограничение числа полученных постов.
+
+            Если параметр не указан, то число полученных постов не будет
+            ограничено.
+        @ptype limit
+            typing.Optional[int]
+        @parameter offset
+            Пропуск первых нескольких полученных постов.
+
+            Если параметр не указан, то ни один полученный пост не будет
+            пропущен.
+        @ptype offset
+            typing.Optional[int]
+        @return
+            Все посты из хранилища.
+        @rtype
+            typing.AsyncIterator[buraki.core.blog.Post]
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @see buraki.core.blog.Post
+        @since 0.1.0
+        """
+
+    @abc.abstractmethod
+    def update(self, new_post: Post) -> typing.Awaitable[None]:
+        """
+        Обновить пост в блоге в хранилище.
+
+        Обновление поста — замена значений атрибутов замещаемого поста
+        на значения атрибутов заменяющего поста.
+
+        @parameter new_post
+            Заменяющий пост.
+        @ptype new_post
+            buraki.core.blog.Post
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @see buraki.core.blog.Post
+        @since 0.1.0
+        """
+
+    @abc.abstractmethod
+    def remove(self, old_post: Post) -> typing.Awaitable[None]:
+        """
+        Удалить пост в блоге из хранилища.
+
+        @parameter old_post
+            Удаляемый из хранилища пост.
+        @ptype old_post
+            buraki.core.blog.Post
+        @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
+        @see buraki.core.blog.Post
+        @since 0.1.0
+        """
