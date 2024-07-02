@@ -37,10 +37,10 @@ class ISpecification[T](typing.Protocol):
     @abc.abstractmethod
     def get_filters(self) -> Tuple:
         """
-        Получить фильтры спецификации.
+        Получить фильтры спецификации бизнес-модели.
 
         @return
-            Фильтры спецификации.
+            Фильтры спецификации бизнес-модели.
         @rtype
             typing.Tuple
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
@@ -57,7 +57,8 @@ class ISpecification[T](typing.Protocol):
         @ptype candidate
             object
         @return
-            Истина, если бизнес-модель соответствует спецификации, иначе ложь.
+            Истина, если бизнес-модель соответствует спецификации, иначе
+            ложь.
         @rtype
             bool
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
@@ -117,7 +118,7 @@ class ISpecification[T](typing.Protocol):
 
 class CompositeSpecification[T](abc.ABC, ISpecification[T]):
     """
-    Абстрактная композитная спецификация бизнес-модели.
+    Абстрактная составная спецификация бизнес-модели.
 
     @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
     @see buraki.core.common.ISpecification

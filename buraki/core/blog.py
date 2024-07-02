@@ -243,11 +243,11 @@ class PostPublishedAtSpecification(core_common.CompositeSpecification[Post]):
         блоге.
 
         @parameter published_from
-            Нижняя граница даты и времени публикации поста.
+            Нижняя граница диапазона даты и времени публикации поста.
         @ptype published_from
             datetime.datetime
         @parameter published_to
-            Верхняя граница даты и времени публикации поста.
+            Верхняя граница диапазона даты и времени публикации поста.
         @ptype published_to
             datetime.datetime
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
@@ -324,7 +324,7 @@ class IPostRepository(typing.Protocol):
         Добавить пост в блоге в хранилище.
 
         @parameter new_post
-            Добавляемый в хранилище пост.
+            Добавляемый пост.
         @ptype new_post
             buraki.core.blog.Post
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
@@ -428,6 +428,8 @@ class IPostRepository(typing.Protocol):
         Обновление поста — замена значений атрибутов замещаемого поста
         на значения атрибутов заменяющего поста.
 
+        Идентификаторы замещаемого и заменяющего постов эквивалентны.
+
         @parameter new_post
             Заменяющий пост.
         @ptype new_post
@@ -443,7 +445,7 @@ class IPostRepository(typing.Protocol):
         Удалить пост в блоге из хранилища.
 
         @parameter old_post
-            Удаляемый из хранилища пост.
+            Удаляемый пост.
         @ptype old_post
             buraki.core.blog.Post
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
