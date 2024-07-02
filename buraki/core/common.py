@@ -147,38 +147,42 @@ class AndSpecification[T](CompositeSpecification[T]):
     """
 
     __slots__ = (
-        "_first_spec",
-        "_second_spec"
+        "_inner_left_spec",
+        "_inner_right_spec"
     )
 
-    def __init__(self, first_spec: ISpecification[T], second_spec: ISpecification[T]):
+    def __init__(
+        self,
+        left_spec: ISpecification[T],
+        right_spec: ISpecification[T]
+    ):
         """
         Конструктор конъюнктивной композиции спецификаций бизнес-модели.
 
-        @parameter first_spec
-            Первая соединяемая спецификация бизнес-модели.
-        @ptype first_spec
+        @parameter left_spec
+            Левая соединяемая спецификация бизнес-модели.
+        @ptype left_spec
             buraki.core.common.ISpecification
-        @parameter second_spec
-            Вторая соединяемая спецификация бизнес-модели.
-        @ptype second_spec
+        @parameter right_spec
+            Правая соединяемая спецификация бизнес-модели.
+        @ptype right_spec
             buraki.core.common.ISpecification
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
         @see buraki.core.common.ISpecification
         @since 0.1.0
         """
-        self._first_spec = first_spec
-        self._second_spec = second_spec
+        self._inner_left_spec = left_spec
+        self._inner_right_spec = right_spec
 
     @typing.override
     def get_filters(self) -> Tuple:
-        return self._first_spec.get_filters() + self._second_spec.get_filters()
+        return self._inner_left_spec.get_filters() + self._inner_right_spec.get_filters()
 
     @typing.override
     def is_satisfied_by(self, candidate: T) -> bool:
         return (
-            self._first_spec.is_satisfied_by(candidate) and
-            self._second_spec.is_satisfied_by(candidate)
+            self._inner_left_spec.is_satisfied_by(candidate) and
+            self._inner_right_spec.is_satisfied_by(candidate)
         )
 
 
@@ -192,38 +196,42 @@ class OrSpecification[T](CompositeSpecification[T]):
     """
 
     __slots__ = (
-        "_first_spec",
-        "_second_spec"
+        "_inner_left_spec",
+        "_inner_right_spec"
     )
 
-    def __init__(self, first_spec: ISpecification[T], second_spec: ISpecification[T]):
+    def __init__(
+        self,
+        left_spec: ISpecification[T],
+        right_spec: ISpecification[T]
+    ):
         """
         Конструктор дизъюнктивной композиции спецификаций бизнес-модели.
 
-        @parameter first_spec
-            Первая соединяемая спецификация бизнес-модели.
-        @ptype first_spec
+        @parameter left_spec
+            Левая соединяемая спецификация бизнес-модели.
+        @ptype left_spec
             buraki.core.common.ISpecification
-        @parameter second_spec
-            Вторая соединяемая спецификация бизнес-модели.
-        @ptype second_spec
+        @parameter right_spec
+            Правая соединяемая спецификация бизнес-модели.
+        @ptype right_spec
             buraki.core.common.ISpecification
         @author Расим "Buraki" Эминов <eminov.workspace@yandex.ru>
         @see buraki.core.common.ISpecification
         @since 0.1.0
         """
-        self._first_spec = first_spec
-        self._second_spec = second_spec
+        self._inner_left_spec = left_spec
+        self._inner_right_spec = right_spec
 
     @typing.override
     def get_filters(self) -> Tuple:
-        return self._first_spec.get_filters() + self._second_spec.get_filters()
+        return self._inner_left_spec.get_filters() + self._inner_right_spec.get_filters()
 
     @typing.override
     def is_satisfied_by(self, candidate: T) -> bool:
         return (
-            self._first_spec.is_satisfied_by(candidate) or
-            self._second_spec.is_satisfied_by(candidate)
+            self._inner_left_spec.is_satisfied_by(candidate) or
+            self._inner_right_spec.is_satisfied_by(candidate)
         )
 
 
@@ -237,7 +245,7 @@ class NotSpecification[T](CompositeSpecification[T]):
     """
 
     __slots__ = (
-        "_spec",
+        "_inner_spec",
     )
 
     def __init__(self, spec: ISpecification[T]):
@@ -252,12 +260,12 @@ class NotSpecification[T](CompositeSpecification[T]):
         @see buraki.core.common.ISpecification
         @since 0.1.0
         """
-        self._spec = spec
+        self._inner_spec = spec
 
     @typing.override
     def get_filters(self) -> Tuple:
-        return self._spec.get_filters()
+        return self._inner_spec.get_filters()
 
     @typing.override
     def is_satisfied_by(self, candidate: T) -> bool:
-        return not self._spec.is_satisfied_by(candidate)
+        return not self._inner_spec.is_satisfied_by(candidate)
