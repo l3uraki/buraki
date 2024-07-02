@@ -236,7 +236,9 @@ class NotSpecification[T](CompositeSpecification[T]):
     @since 0.1.0
     """
 
-    __slots__ = "_spec"
+    __slots__ = (
+        "_spec",
+    )
 
     def __init__(self, spec: ISpecification[T]):
         """

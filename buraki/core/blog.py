@@ -193,7 +193,9 @@ class PostCategorySpecification(core_common.CompositeSpecification[Post]):
     @since 0.1.0
     """
 
-    __slots__ = "_reference_category"
+    __slots__ = (
+        "_reference_category",
+    )
 
     def __init__(self, reference_category: Category):
         """
@@ -276,7 +278,9 @@ class PostTagsSpecification(core_common.CompositeSpecification[Post]):
     @since 0.1.0
     """
 
-    __slots__ = "_reference_tags"
+    __slots__ = (
+        "_reference_tags",
+    )
 
     def __init__(self, *reference_tags: str):
         """
