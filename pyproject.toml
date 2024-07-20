@@ -1,0 +1,19 @@
+[tool.poetry]
+package-mode = false
+name = "buraki"
+version = "0.1.0.dev0"
+description = "Personal website of Rasim \"Buraki\" Eminov"
+license = "MIT"
+authors = ["Rasim Eminov <eminov.workspace@yandex.ru>"]
+readme = "README.md"
+homepage = "https://buraki.site/"
+repository = "https://github.com/l3uraki/buraki/"
+documentation = "https://buraki.site/api/docs/"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
